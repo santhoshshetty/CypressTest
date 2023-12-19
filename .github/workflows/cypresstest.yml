@@ -1,0 +1,40 @@
+name: Cypress Test Execution
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1, 2, 3, 4, 5]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - uses: isbang/compose-action@v1.5.1
+        with:
+          compose-file: "${{ github.workspace }}/docker-compose.yml"
+          down-flags: "--volumes"
+
+      - name: Cypress Run
+        working-directory: ./cypress
+        run: |
+          npm install
+          npm run test
+        continue-on-error: true
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v4.0.0
+        with:
+          name: Cypress Results
+          path: "${{ github.workspace }}/cypress/reports"
