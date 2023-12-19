@@ -7,8 +7,3 @@ WORKDIR /app
 COPY package*.json ./
 COPY cypress cypress
 COPY cypress.config.js .
-
-#Install cypress and its dependencies
-RUN npm install
-
-CMD ["npm", "test"] 
