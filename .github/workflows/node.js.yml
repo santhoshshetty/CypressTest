@@ -23,6 +23,8 @@ jobs:
         compose-file: "${{ github.workspace }}/docker-compose.yml"
         down-flags: "--volumes" 
         
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+    - name: Cypress Run
+      working-directory: ./cypress
+      run: |
+        npm install
+        npm run test
