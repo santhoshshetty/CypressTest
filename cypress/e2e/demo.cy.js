@@ -1,4 +1,7 @@
 ///<reference types="cypress"/>
+///<reference types="cypress-iframe"/>
+
+import "cypress-iframe";
 
 describe("Sample Demo Suite", () => {
   it.skip("Sample Demo Tests", () => {
@@ -30,7 +33,7 @@ describe("Sample Demo Suite", () => {
     cy.contains("Place Order").click();
   });
 
-  it("Sample Demo Element Action Tests", () => {
+  it.skip("Sample Demo Element Action Tests", () => {
     //Checkboxes
     cy.visit("https://rahulshettyacademy.com/AutomationPractice/");
     cy.get("#checkBoxOption1").check().should("be.checked");
@@ -61,5 +64,48 @@ describe("Sample Demo Suite", () => {
     cy.get("input[name='radioButton']").each(($el, index, $list) => {
       cy.wrap($el).check().should("be.checked");
     });
+  });
+
+  it.skip("Sample Demo Tests on Browser Alerts, Tabs", () => {
+    cy.visit("https://rahulshettyacademy.com/AutomationPractice/");
+    cy.get("#alertbtn").click();
+    cy.on("window:alert", (str) => {
+      expect(str).to.equal(
+        "Hello , share this practice page and share your knowledge"
+      );
+    });
+    cy.get("#confirmbtn").click();
+    cy.on("window:confirm", (str) => {
+      expect(str).to.equal("Hello , Are you sure you want to confirm?");
+    });
+    cy.get("#opentab").invoke("removeAttr", "target").click();
+    cy.origin("https://www.qaclickacademy.com/", () => {
+      cy.get(".nav-item a[href*='blog']")
+        .click()
+        .url()
+        .should("contain", "blog");
+    });
+  });
+
+  it("Sample Demo Tests on Mouse Hover, Parse Data Tables, iFrames", () => {
+    cy.visit("https://rahulshettyacademy.com/AutomationPractice/");
+    cy.get(".mouse-hover-content").invoke("show");
+    cy.contains("Top").click();
+    cy.contains("Reload").click({ force: true });
+    cy.get("div.tableFixHead table tr td:nth-child(3)").each(
+      ($el, index, $list) => {
+        if ($el.text().includes("Delhi")) {
+          cy.get("div.tableFixHead table tr td:nth-child(3)")
+            .eq(index)
+            .next()
+            .then((price) => {
+              cy.log(price.text());
+              expect(price.text()).to.equal("33");
+            });
+        }
+      }
+    );
+    cy.frameLoaded("#courses-iframe");
+    cy.iframe().find("a[href*='mentorship']").eq(0).click();
   });
 });
