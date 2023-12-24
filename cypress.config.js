@@ -15,6 +15,7 @@ module.exports = defineConfig({
       inlineAssets: true,
       saveAllAttempts: true,
     },
+    defaultCommandTimeout: 8000,
     video: false,
     videoCompression: 32,
     trashAssetsBeforeRuns: true,
