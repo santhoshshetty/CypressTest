@@ -21,6 +21,10 @@ module.exports = defineConfig({
     trashAssetsBeforeRuns: true,
     baseUrl: "https://www.google.com",
     reporter: "cypress-mochawesome-reporter",
+    env: {
+      url: "https://www.google.com",
+      username: "test",
+    },
     setupNodeEvents(on, config) {
       const appUrl = config.env.type || "localhost";
       const allUrls = {

@@ -10,6 +10,7 @@ describe("Demo FW tests", () => {
   });
 
   it("FW Test - 1", () => {
+    Cypress.b;
     const homePage = new HomePage();
     cy.visit("https://rahulshettyacademy.com/angularpractice/");
     cy.get("input[name='name']").eq(0).type("Ishaan");
@@ -22,7 +23,21 @@ describe("Demo FW tests", () => {
     const cartPage = new CartsPage();
     cy.visit("https://rahulshettyacademy.com/angularpractice/shop");
     cy.addProduct("iphone X");
+    cy.addProduct("Samsung Note 8");
     cy.get("li[class='nav-item active']>a").click();
+    var sum = 0;
+    cy.get("tr td:nth-child(3) strong")
+      .each(($el, index, $list) => {
+        const price = $el.text().split(" ")[1].trim();
+        cy.log(price);
+        sum = Number(sum) + Number(price);
+      })
+      .then(() => {
+        cy.log(sum);
+      });
+    cy.get("td h3 strong").then((element) => {
+      expect(Number(element.text().split(" ")[1].trim())).to.equal(sum);
+    });
     cartPage.getCheckoutButton().click();
     cy.get("#country").type("India");
     cy.get(".suggestions > ul > li > a").click();
