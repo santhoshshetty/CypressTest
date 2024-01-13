@@ -1,0 +1,36 @@
+name: auto merge dependabot PR
+on:
+  pull_request:
+    branches:
+      - master
+jobs:
+  run-smoke-test:
+    name: run smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: setup JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: run smoke test
+        run: echo "Smoke Test Pass"
+  auto-merge-dependabot:
+    name: Auto merge Depandabot PR
+    timeout-minutes: 10
+    needs:
+      - run-smoke-test
+    if: ${{ github.actor === 'dependabot[bot]' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
+    steps:
+      - name: Merge PR from Dependabot
+        uses: fastify/github-action-merge-dependabot@v3.9.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          target: minor
+          merge-method: rebase
